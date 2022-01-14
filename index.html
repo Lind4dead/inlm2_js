@@ -19,23 +19,24 @@
   <h2>Add Todo</h2>
   <form class="d-flex flex-column justify-content-center align-items-center row w-50" id="todoForm">
     <div class="col-6 input">
-      <input type="text" class="form-control" placeholder="Todo" id="todoInput">
+      <input type="text" class="form-control invalid" placeholder="Todo" id="todoInput">
+      <div class="invalid-feedback" id="todoInput-error"></div>
     </div>
     <button class="btn btn-primary mt-3 col-6" id="addBtn">Add TODO</button>
   </form>
 </div>
 
-<div class="container list-group mt-5" id="todo-list">
-  <div class="d-flex justify-content-end me-2">
+<div class="container list-group my-5" id="todo-list">
+  <div class="container d-flex justify-content-center me-2">
     <h4>Done</h4>
   </div>
-  <a href="#" class="list-group-item d-flex list-group-item-action" aria-current="true">
+  <a href="#" class="list-group-item d-flex list-group-item-action"  aria-current="true">
     <div class="d-flex w-100 flex-column justify-content-between">
       <small>ID: 8</small>
       <h5 class="mb-1">Todo description</h5>
     </div>
     <div class="form-check d-flex justify-content-center align-items-center">
-      <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+      <input class="form-check-input" type="checkbox" value="" id="doneCheck">
       <button class="btn btn-danger ms-2 d-none" id="btnDelete">X</button>
     </div>
   </a>
@@ -45,7 +46,7 @@
       <h5 class="mb-1">Todo description</h5>
     </div>
     <div class="form-check d-flex justify-content-center align-items-center">
-      <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+      <input class="form-check-input" type="checkbox" value="" id="doneCheck">
       <button class="btn btn-danger ms-2 d-none" id="btnDelete">X</button>
     </div>
   </a>

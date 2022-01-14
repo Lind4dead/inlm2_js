@@ -12,3 +12,9 @@
 .list-group-item {
   padding: .2rem 1rem;
 }
+.done {
+  background-color: #23a55bb7;
+}
+.done:hover {
+  background-color: #3bbb72b7 !important;
+}
