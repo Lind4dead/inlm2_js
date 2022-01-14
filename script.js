@@ -2,6 +2,7 @@ const todoList = document.querySelector('#todo-list');
 const input = document.querySelector('#todoInput');
 const inputError = document.querySelector('#todoInput-error')
 const addBtn = document.querySelector('#addBtn');
+const resError = document.querySelector('#resError');
 
 
 
@@ -12,10 +13,18 @@ let todos = [];
 
 
 
-const validation = (inp) => {
-  if (inp === '') {
+const validation = () => {
+  console.log(input.value)
+  if (input.value === '') {
+    input.classList.remove('is-valid')
     input.classList.add('is-invalid')
     inputError.innerText = 'Your todo cannot be empty'
+    return false;
+  }
+  else {
+    input.classList.remove('is-invalid')
+    input.classList.add('is-valid')
+    return true;
   }
 }
 
@@ -37,18 +46,20 @@ const listTodosOnLoadup = async () => {
   try {
     const res = await fetch('https://jsonplaceholder.typicode.com/todos/?_limit=10')
     
-
-
     if (res.status !== 200) {
-      return new Error('Unable to obtain list')
+      throw new Error(`Unable to fetch wanted URL. Status ${res.status}`)
     }
     todos = await res.json()
+    resError.classList.remove('error')
+    resError.classList.add('d-none')
     listTodos();
     
-
   }
   catch (err) {
-    console.log(err.message)
+    console.log(err)
+    resError.classList.add('error')
+    resError.classList.remove('d-none')
+    resError.innerText = `${err.message}`
   }
 }
 
@@ -92,8 +103,12 @@ const addTodo = (input) => {
     .then((response) => response.json())
     .then((json) => {
       
-
-      json.id = todos.length + 1
+      let max = 0;
+      todos.forEach(todo => {
+        if(todo.id > max)
+        max = todo.id
+      })
+      json.id = max + 1
       todos.push(json);
       
       listTodos();
@@ -165,13 +180,20 @@ const checkBox = (e, deleteBtn, todoDIV) => {
 
 
 
-
 listTodosOnLoadup();
+
+
+
+
 
 addBtn.addEventListener('click', e => {
   e.preventDefault();
- 
-  addTodo(input.value);
+  console.log(input.value)
+  validation();
+  console.log(validation());
+  if(validation()){
+    addTodo(input.value);
+  }
   listTodos();
  
   input.value = '';

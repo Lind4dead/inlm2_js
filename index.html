@@ -16,7 +16,8 @@
    </header>
 
 <div class="container mt-5 justify-content-center align-items-center d-flex flex-column">
-  <h2>Add Todo</h2>
+  <h1 class="error d-none" id="resError">Unable to fetch wanted URL</h1>
+  <h2 class="d-block mt-2">Add Todo</h2>
   <form class="d-flex flex-column justify-content-center align-items-center row w-50" id="todoForm">
     <div class="col-6 input">
       <input type="text" class="form-control invalid" placeholder="Todo" id="todoInput">
@@ -26,10 +27,10 @@
   </form>
 </div>
 
-<div class="container list-group my-5" id="todo-list">
-  <div class="container d-flex justify-content-center me-2">
-    <h4>Done</h4>
-  </div>
+<div class="container d-flex justify-content-end mt-4">
+  <h4>Done</h4>
+</div>
+<div class="container list-group" id="todo-list">
   <a href="#" class="list-group-item d-flex list-group-item-action"  aria-current="true">
     <div class="d-flex w-100 flex-column justify-content-between">
       <small>ID: 8</small>

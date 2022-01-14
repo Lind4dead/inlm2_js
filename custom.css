@@ -18,3 +18,6 @@
 .done:hover {
   background-color: #3bbb72b7 !important;
 }
+.error {
+  color: red;
+}
