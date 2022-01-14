@@ -14,7 +14,7 @@ let todos = [];
 
 
 const validation = () => {
-  console.log(input.value)
+  
   if (input.value === '') {
     input.classList.remove('is-valid')
     input.classList.add('is-invalid')
@@ -56,7 +56,7 @@ const listTodosOnLoadup = async () => {
     
   }
   catch (err) {
-    console.log(err)
+    console.log(err.message)
     resError.classList.add('error')
     resError.classList.remove('d-none')
     resError.innerText = `${err.message}`
@@ -141,7 +141,7 @@ const checkBox = (e, deleteBtn, todoDIV) => {
             title: todos[iTodo].title,
             completed: true
           }
-          console.log(todos)
+          
         });
         deleteBtn.classList.remove('d-none')
         todoDIV.classList.add('done')
@@ -168,7 +168,7 @@ const checkBox = (e, deleteBtn, todoDIV) => {
             title: todos[iTodo].title,
             completed: false
           }
-          console.log(todos)
+          
         });
   
       deleteBtn.classList.add('d-none');
@@ -188,12 +188,10 @@ listTodosOnLoadup();
 
 addBtn.addEventListener('click', e => {
   e.preventDefault();
-  console.log(input.value)
   validation();
-  console.log(validation());
-  if(validation()){
-    addTodo(input.value);
-  }
+  
+  if(validation()) addTodo(input.value);
+
   listTodos();
  
   input.value = '';
@@ -205,7 +203,7 @@ todoList.addEventListener('click', e => {
   
   const deleteBtn = document.querySelector('#btnDelete' + e.target.parentNode.id)
   const todoDIV = document.querySelector('#todo' + e.target.parentNode.id)
-  console.log(todos)
+  
   
   checkBox(e, deleteBtn, todoDIV);
     
