@@ -1,4 +1,5 @@
 const todoList = document.querySelector('#todo-list');
+const doneList = document.querySelector('#done-list');
 const input = document.querySelector('#todoInput');
 const inputError = document.querySelector('#todoInput-error')
 const addBtn = document.querySelector('#addBtn');
@@ -10,7 +11,7 @@ const resError = document.querySelector('#resError');
 
 
 let todos = [];
-
+let doneTodos = [];
 
 
 const validation = () => {
@@ -28,18 +29,12 @@ const validation = () => {
   }
 }
 
-const completedTodo = () => {
+const completedTodo = (aTag, delBtn, checkbox) => {
+ 
+    delBtn.classList.remove('d-none')
+    checkbox.checked = true;
+    aTag.classList.add('done')
   
-  for(let i = 0; i < todos.length; i++){
-    if(todos[i].completed){
-      const todoDIV = document.querySelector('#todo' + todos[i].id)
-      todoDIV.classList.add('done')
-      todoDIV.children[1].children[0].checked = true;
-      todoDIV.children[1].children[1].classList.remove('d-none');
-
-
-    }
-  }
 }
 
 const listTodosOnLoadup = async () => {
@@ -63,25 +58,220 @@ const listTodosOnLoadup = async () => {
   }
 }
 
+const createDoneElement = todo => {
+  let aTag = document.createElement('a')
+  aTag.classList.add('list-group-item', 'd-flex', 'list-group-item-action', 'justify-content-between', 'align-items-center', 'done')
+  aTag.setAttribute('id', 'todo')
+
+  let title = document.createElement('h5');
+  title.classList.add('text-center')
+  title.innerText = todo.title;
+
+  aTag.appendChild(title)
+
+  return aTag;
+}
+
+const addToDoneList = () => {
+  doneList.innerHTML = '';
+
+  doneTodos.forEach(todo => {
+    doneList.appendChild(createDoneElement(todo))
+  })
+}
+
+const removeTodo = async (id, aTag) => {
+  try{
+    console.log(await fetch('https://jsonplaceholder.typicode.com/todos/' + id.id));
+    
+    fetch('https://jsonplaceholder.typicode.com/todos/' + id.id, {
+      method: 'DELETE',
+    })
+    
+    doneTodos.push(id)
+    todos = todos.filter(todo => todo.id !== id.id)
+    addToDoneList();
+    
+    aTag.remove();
+  }
+  catch (err) {
+    console.log(err.message)
+    resError.classList.add('error')
+    resError.classList.remove('d-none')
+    resError.innerText = `${err.message}`
+  }
+  
+
+}
+
+const createTodoElement = todo => {
+  let aTag = document.createElement('a')
+  aTag.classList.add('list-group-item', 'd-flex', 'list-group-item-action', 'justify-content-between', 'align-items-center')
+  aTag.setAttribute('id', 'todo')
+
+  let title = document.createElement('h5');
+  title.classList.add('text-center')
+  title.innerText = todo.title;
+
+  let checkAndButton = document.createElement('div');
+  checkAndButton.classList.add('form-check', 'd-flex', 'justify-content-center', 'align-items-center')
+
+  let checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.classList.add('form-check-input')
+
+  let delBtn = document.createElement('button');
+  delBtn.classList.add('btn', 'btn-danger', 'ms-2', 'd-none')
+  delBtn.innerText = 'X'
+
+  
+
+  delBtn.addEventListener('click', () => removeTodo(todo, aTag))
+  aTag.addEventListener('click', e => {
+    console.log(e.target.type)
+    if(e.target.type !== 'submit'){
+
+      if(checkbox.checked){
+        checkbox.checked = false
+        fetch('https://jsonplaceholder.typicode.com/todos/' + todo.id, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            completed: false,
+          }),
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+          },
+        })
+        .then((response) => response.json())
+        .then((json) => {
+          const _todo = todos.find(u => u.id === json.id)
+      const iTodo = todos.indexOf(_todo)
+      
+      
+      todos[iTodo] = {
+        id: todos[iTodo].id,
+        title: todos[iTodo].title,
+        completed: false
+      }
+      
+    });
+    aTag.classList.remove('done')
+    delBtn.classList.add('d-none')
+  }
+  else{
+    checkbox.checked = true;
+    fetch('https://jsonplaceholder.typicode.com/todos/' + todo.id, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        completed: true,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    })
+    .then((response) => response.json())
+    .then((json) => {
+      // console.log(json)
+      const _todo = todos.find(u => u.id === json.id)
+      const iTodo = todos.indexOf(_todo)
+      
+      todos[iTodo] = {
+        id: todos[iTodo].id,
+        title: todos[iTodo].title,
+        completed: true
+      }
+      
+    });
+    completedTodo(aTag, delBtn, checkbox)
+  }
+  
+}
+})
+
+
+
+checkbox.addEventListener('change', e => {
+  
+  if(checkbox.checked){
+    checkbox.checked = false
+    fetch('https://jsonplaceholder.typicode.com/todos/' + todo.id, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        completed: false,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    })
+    .then((response) => response.json())
+    .then((json) => {
+      
+      const _todo = todos.find(u => u.id === json.id)
+      const iTodo = todos.indexOf(_todo)
+      
+      
+      todos[iTodo] = {
+        id: todos[iTodo].id,
+        title: todos[iTodo].title,
+        completed: false
+      }
+      
+    });
+      aTag.classList.remove('done')
+      delBtn.classList.add('d-none')
+    }
+    else{
+      checkbox.checked = true;
+      fetch('https://jsonplaceholder.typicode.com/todos/' + todo.id, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        completed: true,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    })
+    .then((response) => response.json())
+    .then((json) => {
+      
+      const _todo = todos.find(u => u.id === json.id)
+      const iTodo = todos.indexOf(_todo)
+      
+      todos[iTodo] = {
+        id: todos[iTodo].id,
+        title: todos[iTodo].title,
+        completed: true
+      }
+      
+    });
+      completedTodo(aTag, delBtn, checkbox)
+    }
+    
+  })
+  if(todo.completed){
+
+    completedTodo(aTag, delBtn, checkbox)
+  }
+
+  checkAndButton.appendChild(checkbox)
+  checkAndButton.appendChild(delBtn)
+
+  aTag.appendChild(title)
+  aTag.appendChild(checkAndButton)
+
+  return aTag
+}
+
 const listTodos = () => {
   todoList.innerHTML = '';
 
   todos.forEach(todo => {
-    todoList.insertAdjacentHTML('beforeend', `
-    <a href="#" class="list-group-item d-flex list-group-item-action" id="todo${todo.id}" aria-current="true">
-  <div class="d-flex w-100 flex-column justify-content-between">
-    <small id="idNumber">${todo.id}</small>
-    <h5 class="mb-1">${todo.title}</h5>
-  </div>
-  <div class="form-check d-flex justify-content-center align-items-center" id="${todo.id}">
-    <input class="form-check-input" type="checkbox" value="" id="doneCheck">
-    <button class="btn btn-danger ms-2 d-none" id="btnDelete${todo.id}">X</button>
-  </div>
-</a>
-    `)
+    todoList.appendChild(createTodoElement(todo));
+    
+   
   })
 
-  completedTodo();
+  
 }
 
 
@@ -90,7 +280,6 @@ const addTodo = (input) => {
   fetch('https://jsonplaceholder.typicode.com/todos', {
     method: 'POST',
     body: JSON.stringify({
-      userId: 1,
       id: 1,
       title: input,
       completed: false,
@@ -118,66 +307,6 @@ const addTodo = (input) => {
     });
 }
 
-const checkBox = (e, deleteBtn, todoDIV) => {
-  switch(e.target.type === 'checkbox'){
-    case e.target.checked:
-      fetch('https://jsonplaceholder.typicode.com/todos/' + e.target.parentNode.id, {
-        method: 'PATCH',
-        body: JSON.stringify({
-          completed: true,
-        }),
-        headers: {
-          'Content-type': 'application/json; charset=UTF-8',
-        },
-      })
-        .then((response) => response.json())
-        .then((json) => {
-          const todo = todos.find(u => u.id === json.id)
-          const iTodo = todos.indexOf(todo)
-         
-          todos[iTodo] = {
-            userId: todos[iTodo].userId,
-            id: todos[iTodo].id,
-            title: todos[iTodo].title,
-            completed: true
-          }
-          
-        });
-        deleteBtn.classList.remove('d-none')
-        todoDIV.classList.add('done')
-        break;
-    
-    case !e.target.checked:
-      fetch('https://jsonplaceholder.typicode.com/todos/' + e.target.parentNode.id, {
-        method: 'PATCH',
-        body: JSON.stringify({
-          completed: false,
-        }),
-        headers: {
-          'Content-type': 'application/json; charset=UTF-8',
-        },
-      })
-        .then((response) => response.json())
-        .then((json) => {
-          const todo = todos.find(u => u.id === json.id)
-          const iTodo = todos.indexOf(todo)
-         
-          todos[iTodo] = {
-            userId: todos[iTodo].userId,
-            id: todos[iTodo].id,
-            title: todos[iTodo].title,
-            completed: false
-          }
-          
-        });
-  
-      deleteBtn.classList.add('d-none');
-      todoDIV.classList.remove('done')
-  
-    }
-}
-
-
 
 
 listTodosOnLoadup();
@@ -199,30 +328,6 @@ addBtn.addEventListener('click', e => {
 
 
 
-todoList.addEventListener('click', e => {
-  
-  const deleteBtn = document.querySelector('#btnDelete' + e.target.parentNode.id)
-  const todoDIV = document.querySelector('#todo' + e.target.parentNode.id)
-  
-  
-  checkBox(e, deleteBtn, todoDIV);
-    
-  if(e.target.type === 'submit'){
-    e.preventDefault()
-    
-    fetch('https://jsonplaceholder.typicode.com/todos/' + e.target.parentNode.id, {
-      method: 'DELETE',
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-
-    todos = todos.filter(todo => todo.id != e.target.parentNode.id)
-    
-    listTodos();
-  }
-  
-})
 
 
 

@@ -1,5 +1,12 @@
+
+h5 {
+  margin: 0 !important;
+}
 .input {
   padding: 0;
+}
+.form-check {
+  margin-block: 0.2rem;
 }
 .form-check-input {
   width: 2rem;
@@ -20,4 +27,11 @@
 }
 .error {
   color: red;
+}
+.form-check .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
 }
