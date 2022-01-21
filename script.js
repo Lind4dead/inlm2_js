@@ -82,9 +82,8 @@ const addToDoneList = () => {
 
 const removeTodo = async (id, aTag) => {
   try{
-    console.log(await fetch('https://jsonplaceholder.typicode.com/todos/' + id.id));
     
-    fetch('https://jsonplaceholder.typicode.com/todos/' + id.id, {
+    await fetch('https://jsonplaceholder.typicode.com/todos/' + id.id, {
       method: 'DELETE',
     })
     
