@@ -83,15 +83,16 @@ const addToDoneList = () => {
 const removeTodo = async (id, aTag) => {
   try{
     
+    aTag.remove();
+    doneTodos.push(id)
+    addToDoneList();
+    
     await fetch('https://jsonplaceholder.typicode.com/todos/' + id.id, {
       method: 'DELETE',
     })
     
-    doneTodos.push(id)
     todos = todos.filter(todo => todo.id !== id.id)
-    addToDoneList();
     
-    aTag.remove();
   }
   catch (err) {
     console.log(err.message)
